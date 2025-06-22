@@ -1,11 +1,15 @@
 "use client";
 
-import { Mail, Lock } from "lucide-react";
-import { useActionState } from "react";
+import { EyeOff, Eye } from "lucide-react";
+import { useActionState, useState } from "react";
 import { loginAction } from "../actions";
 import { useForm, getInputProps, getFormProps } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { LoginFormSchema } from "../schema/login.schema";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function LoginForm() {
   const [formState, formAction, isLoading] = useActionState(
@@ -21,77 +25,78 @@ export default function LoginForm() {
     shouldRevalidate: "onInput",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
-    <form action={formAction} {...getFormProps(form)} className="space-y-6">
-      {/* <!-- Error Message --> */}
-      {form.errors && (
-        <div
-          id="error-message"
-          className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-400 px-4 py-3 rounded-lg text-sm"
-        >
-          {form.errors}
-        </div>
-      )}
-      <div>
-        <label
-          htmlFor={fields.email.id}
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-        >
-          Correo Electrónico
-        </label>
-        <div className="relative">
-          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            {...getInputProps(fields.email, { type: "email" })}
-            required
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
-            placeholder="tu@email.com"
-          />
-        </div>
+    <form action={formAction} {...getFormProps(form)} className="space-y-4">
+      <div className={`space-y-2 ${fields.email.errors ? "text-red-500" : ""}`}>
+        <Label htmlFor={fields.email.id}>
+          Correo Electrónico{<span className="text-red-500">*</span>}
+        </Label>
+        <Input
+          {...getInputProps(fields.email, { type: "email" })}
+          placeholder="tu@email.com"
+          required
+          className="h-11"
+        />
         {fields.email.errors && <span>{fields.email.errors}</span>}
       </div>
 
-      <div>
-        <label
-          htmlFor={fields.password.id}
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-        >
-          Contraseña
-        </label>
+      <div
+        className={`space-y-2 ${fields.password.errors ? "text-red-500" : ""}`}
+      >
+        <Label htmlFor={fields.password.id}>
+          Contraseña{<span className="text-red-500">*</span>}
+        </Label>
         <div className="relative">
-          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            {...getInputProps(fields.password, { type: "password" })}
+          <Input
+            {...getInputProps(fields.password, {
+              type: showPassword ? "text" : "password",
+            })}
+            placeholder="Tu contraseña"
             required
-            minLength={6}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
-            placeholder="••••••••"
+            className="h-11 pr-10"
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+          >
+            {showPassword ? (
+              <EyeOff className="w-4 h-4" />
+            ) : (
+              <Eye className="w-4 h-4" />
+            )}
+          </button>
         </div>
-        {fields.password.errors && <div>{fields.password.errors}</div>}
-      </div>
-      <div>
-        <label
-          htmlFor={fields.keepSession.id}
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-        >
-          Recuerdame
-        </label>
-        <div className="relative">
-          {/* <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" /> */}
-          <input {...getInputProps(fields.keepSession, { type: "checkbox" })} />
-        </div>
-        {fields.keepSession.errors && <div>{fields.keepSession.errors}</div>}
+        {fields.password.errors && <span>{fields.password.errors}</span>}
       </div>
 
-      {/* <!-- Submit Button --> */}
-      <button
-        disabled={isLoading}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <input
+            {...getInputProps(fields.keepSession, { type: "checkbox" })}
+            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+          />
+          <Label
+            htmlFor={fields.keepSession.id}
+            className="text-sm text-gray-600"
+          >
+            Recordarme
+          </Label>
+        </div>
+        <Link href="#" className="text-sm text-blue-600 hover:text-blue-700">
+          ¿Olvidaste tu contraseña?
+        </Link>
+      </div>
+
+      <Button
         type="submit"
-        className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-gray-400 text-white py-3 rounded-lg font-semibold transition-colors flex items-center justify-center"
+        className="w-full h-11 bg-blue-600 hover:bg-blue-700 hover:cursor-pointer"
+        disabled={isLoading}
       >
-        Iniciar Sesión
-      </button>
+        {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
+      </Button>
     </form>
   );
 }
