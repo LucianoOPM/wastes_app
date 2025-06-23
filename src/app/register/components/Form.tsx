@@ -1,13 +1,19 @@
 "use client";
-import { User, Mail, Lock } from "lucide-react";
+import { EyeOff, Eye } from "lucide-react";
 import { parseWithZod } from "@conform-to/zod";
 import { RegisterSchema } from "../schema/register.schema";
-import { useForm } from "@conform-to/react";
+import { getInputProps, useForm } from "@conform-to/react";
 import { registerAction } from "../actions";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function RegisterForm() {
-  const [formState, formAction] = useActionState(registerAction, undefined);
+  const [formState, formAction, isLoading] = useActionState(
+    registerAction,
+    undefined
+  );
   const [form, fields] = useForm({
     lastResult: formState,
     onValidate({ formData }) {
@@ -17,143 +23,146 @@ export default function RegisterForm() {
     shouldRevalidate: "onInput",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   return (
     <form
-      id={form.id}
-      className="space-y-6"
-      onSubmit={form.onSubmit}
       action={formAction}
+      onSubmit={form.onSubmit}
+      id={form.id}
+      className="space-y-4"
     >
-      {form.errors && <span>{form.errors}</span>}
-      <div>
-        <label
-          htmlFor="firstName"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+      {/*//TODO Cambiar por un alertify/toastify */}
+      {form.errors && (
+        <div
+          id="error-message"
+          className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-400 px-4 py-3 rounded-lg text-sm"
         >
-          Nombre(s)
-        </label>
-        <div className="relative">
-          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type="text"
-            key={fields.firstName.key}
-            name={fields.firstName.name}
-            defaultValue={fields.firstName.initialValue}
-            id="firstName"
-            required
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
-            placeholder="Tu nombre completo"
-          />
+          {form.errors}
         </div>
-        <div>{fields.firstName.errors}</div>
+      )}
+      <div
+        className={`space-y-2 ${fields.firstName.errors ? "text-red-500" : ""}`}
+      >
+        <Label htmlFor={fields.firstName.id}>
+          Nombre(s){<span className="text-red-500">*</span>}
+        </Label>
+        <Input
+          {...getInputProps(fields.firstName, { type: "text" })}
+          placeholder="Tu nombre"
+          required
+          className="h-11"
+        />
+        {fields.firstName.errors && (
+          <span className="text-sm">{fields.firstName.errors}</span>
+        )}
       </div>
-      <div>
-        <label
-          htmlFor="lastName"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-        >
-          Apellido(S)
-        </label>
-        <div className="relative">
-          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type="text"
-            id="lastName"
-            key={fields.lastName.key}
-            name={fields.lastName.name}
-            defaultValue={fields.lastName.initialValue}
-            required
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
-            placeholder="Tus apellidos"
-          />
-        </div>
-        <div>{fields.lastName.errors}</div>
-      </div>
-      <div>
-        <label
-          htmlFor="email"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-        >
-          Correo Electrónico
-        </label>
-        <div className="relative">
-          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            key={fields.email.key}
-            name={fields.email.name}
-            defaultValue={fields.email.initialValue}
-            type="email"
-            id="email"
-            required
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
-            placeholder="tu@email.com"
-          />
-        </div>
-        {fields.email.errors && <span>{fields.email.errors}</span>}
-      </div>
-
-      <div>
-        <label
-          htmlFor="password"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-        >
-          Contraseña
-        </label>
-        <div className="relative">
-          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            key={fields.password.key}
-            name={fields.password.name}
-            defaultValue={fields.password.initialValue}
-            type="password"
-            id="password"
-            required
-            minLength={6}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
-            placeholder="Mínimo 6 caracteres"
-          />
-        </div>
-        {fields.password.errors && <span>{fields.password.errors}</span>}
-      </div>
-
-      <div>
-        <label
-          htmlFor="confirmPassword"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-        >
-          Confirmar Contraseña
-        </label>
-        <div className="relative">
-          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type="password"
-            id="confirmPassword"
-            key={fields.confirmPassword.key}
-            name={fields.confirmPassword.name}
-            defaultValue={fields.confirmPassword.initialValue}
-            required
-            minLength={6}
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white"
-            placeholder="Confirma tu contraseña"
-          />
-        </div>
-        {fields.confirmPassword.errors && (
-          <span>{fields.confirmPassword.errors}</span>
+      <div
+        className={`space-y-2 ${fields.lastName.errors ? "text-red-500" : ""}`}
+      >
+        <Label htmlFor={fields.lastName.id}>
+          Apellido(s){<span className="text-red-500">*</span>}
+        </Label>
+        <Input
+          {...getInputProps(fields.lastName, { type: "text" })}
+          placeholder="Tus apellidos"
+          required
+          className="h-11"
+        />
+        {fields.lastName.errors && (
+          <span className="text-sm">{fields.lastName.errors}</span>
         )}
       </div>
 
-      {/* <!-- Submit Button --> */}
-      <button
-        type="submit"
-        id="register-button"
-        className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-gray-400 text-white py-3 rounded-lg font-semibold transition-colors flex items-center justify-center hover:cursor-pointer"
+      <div className={`space-y-2 ${fields.email.errors ? "text-red-500" : ""}`}>
+        <Label htmlFor={fields.email.id}>
+          Correo Electrónico{<span className="text-red-500">*</span>}
+        </Label>
+        <Input
+          {...getInputProps(fields.email, { type: "email" })}
+          placeholder="tu@email.com"
+          required
+          className="h-11"
+        />
+        {fields.email.errors && (
+          <span className="text-sm">{fields.email.errors}</span>
+        )}
+      </div>
+
+      <div
+        className={`space-y-2 ${fields.password.errors ? "text-red-500" : ""}`}
       >
-        <span id="register-text">Crear Cuenta</span>
-        <div
-          id="register-spinner"
-          className="hidden ml-2 w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"
-        ></div>
-      </button>
+        <Label htmlFor={fields.password.id}>
+          Contraseña{<span className="text-red-500">*</span>}
+        </Label>
+        <div className="relative">
+          <Input
+            {...getInputProps(fields.password, {
+              type: showPassword ? "text" : "password",
+            })}
+            placeholder="Mínimo 8 caracteres"
+            required
+            className="h-11 pr-10"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+          >
+            {showPassword ? (
+              <EyeOff className="w-4 h-4" />
+            ) : (
+              <Eye className="w-4 h-4" />
+            )}
+          </button>
+        </div>
+        {fields.password.errors && (
+          <span className="text-sm">{fields.password.errors}</span>
+        )}
+      </div>
+
+      <div
+        className={`space-y-2 ${
+          fields.confirmPassword.errors ? "text-red-500" : ""
+        }`}
+      >
+        <Label htmlFor={fields.confirmPassword.id}>
+          Confirmar Contraseña{<span className="text-red-500">*</span>}
+        </Label>
+        <div className="relative">
+          <Input
+            {...getInputProps(fields.confirmPassword, {
+              type: showConfirmPassword ? "text" : "password",
+            })}
+            placeholder="Confirma tu contraseña"
+            required
+            className="h-11 pr-10"
+          />
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+          >
+            {showConfirmPassword ? (
+              <EyeOff className="w-4 h-4" />
+            ) : (
+              <Eye className="w-4 h-4" />
+            )}
+          </button>
+        </div>
+        {fields.confirmPassword.errors && (
+          <span className="text-sm">{fields.confirmPassword.errors}</span>
+        )}
+      </div>
+
+      <Button
+        type="submit"
+        className="w-full h-11 bg-blue-600 hover:bg-blue-700"
+        disabled={isLoading}
+      >
+        {isLoading ? "Creando cuenta..." : "Crear Cuenta"}
+      </Button>
     </form>
   );
 }
