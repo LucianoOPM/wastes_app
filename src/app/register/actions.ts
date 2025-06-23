@@ -22,7 +22,7 @@ export async function registerAction(prevState: unknown, formData: FormData) {
   const bodyToJson = JSON.stringify(toSendBody, null, 2);
 
   try {
-    const res = await fetch("http://localhost:8080/api/v1/users", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND}/users`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -34,11 +34,11 @@ export async function registerAction(prevState: unknown, formData: FormData) {
       const errorMessage = await handleApiErrors(res);
       throw new Error(errorMessage);
     }
-    redirect("/");
   } catch (error: unknown) {
     if (error instanceof Error) {
       return submission.reply({ formErrors: [error.message] });
     }
     return submission.reply({ formErrors: ["Ocurrió un error desconocido"] });
   }
+  redirect("/");
 }
