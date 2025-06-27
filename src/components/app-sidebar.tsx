@@ -1,13 +1,8 @@
 import {
-  BadgeCheck,
   BarChart3,
-  Bell,
-  ChevronsUpDown,
   CreditCard,
   FileText,
   LayoutDashboard,
-  LogOut,
-  Sparkles,
   Tags,
   User,
 } from "lucide-react";
@@ -22,19 +17,11 @@ import {
   SidebarMenuItem,
   SidebarHeader,
   SidebarSeparator,
-  useSidebar,
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+import { DropdownMenu } from "@/components/ui/dropdown-menu";
 import { DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession } from "next-auth/react";
@@ -71,7 +58,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader>
+      <SidebarHeader className="py-[10px]">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
@@ -109,6 +96,8 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarSeparator />
+
       <SidebarFooter>
         <NavUser email={session?.user?.email} userName={session.user.name} />
       </SidebarFooter>
@@ -117,7 +106,6 @@ export function AppSidebar() {
 }
 
 function NavUser({ email, userName }: { email: string; userName: string }) {
-  const { isMobile } = useSidebar();
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -135,55 +123,8 @@ function NavUser({ email, userName }: { email: string; userName: string }) {
                 <span className="truncate font-medium">{userName}</span>
                 <span className="truncate text-xs">{email}</span>
               </div>
-              <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
-            align="end"
-            sideOffset={4}
-          >
-            <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src="/image.jpg" alt="User image" />
-                  <AvatarFallback className="rounded-lg">LP</AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{userName}</span>
-                  <span className="truncate text-xs">{email}</span>
-                </div>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
-              Log out
-            </DropdownMenuItem>
-          </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
