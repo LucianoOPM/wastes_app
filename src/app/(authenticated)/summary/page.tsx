@@ -1,6 +1,6 @@
 import { TrendingUp, TrendingDown, Target, Calendar } from "lucide-react";
 import IncomeExpenseChart from "@/app/views/components/IncomeExpenseCharts";
-import ExpenseChart from "@/app/views/components/ExpenseChart";
+import ExpenseChart from "@/components/ExpenseChart";
 
 export default function page() {
   return (
