@@ -1,7 +1,7 @@
 import { Plus } from "lucide-react";
 import StatsCard from "./components/StatsCard";
 import { Metadata } from "next";
-import ExpenseChart from "./components/ExpenseChart";
+import ExpenseChart from "../../components/ExpenseChart";
 import IncomeExpenseChart from "./components/IncomeExpenseCharts";
 import {
   mockExpensesByCategory,

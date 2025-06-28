@@ -1,7 +1,7 @@
 // Mock data for the application
 export const mockTransactions = [
   {
-    id: "1",
+    id: 1,
     description: "Salario mensual",
     amount: 3500,
     type: "income" as const,
@@ -9,7 +9,7 @@ export const mockTransactions = [
     date: new Date("2025-01-01"),
   },
   {
-    id: "2",
+    id: 2,
     description: "Supermercado",
     amount: -120,
     type: "expense" as const,
@@ -17,7 +17,7 @@ export const mockTransactions = [
     date: new Date("2025-01-02"),
   },
   {
-    id: "3",
+    id: 3,
     description: "Gasolina",
     amount: -80,
     type: "expense" as const,
@@ -25,7 +25,7 @@ export const mockTransactions = [
     date: new Date("2025-01-03"),
   },
   {
-    id: "4",
+    id: 4,
     description: "Cine",
     amount: -25,
     type: "expense" as const,
@@ -33,7 +33,7 @@ export const mockTransactions = [
     date: new Date("2025-01-04"),
   },
   {
-    id: "5",
+    id: 5,
     description: "Freelance proyecto",
     amount: 800,
     type: "income" as const,
@@ -41,7 +41,7 @@ export const mockTransactions = [
     date: new Date("2025-01-05"),
   },
   {
-    id: "6",
+    id: 6,
     description: "Compra ropa",
     amount: -150,
     type: "expense" as const,
